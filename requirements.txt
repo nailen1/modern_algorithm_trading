@@ -1,0 +1,4 @@
+pandas
+canonical_transformer
+universal_timeseries_transformer>=0.3.8
+pycoingecko>=3.2.0

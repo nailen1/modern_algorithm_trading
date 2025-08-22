@@ -1,13 +1,15 @@
 from functools import partial, reduce
+from urllib.parse import quote
 import requests
 import pandas as pd
-from urllib.parse import quote
 from universal_timeseries_transformer import transform_timeseries
-from .consts import COINGECKO_APIBASE_URL
 from .basis import fetch_coingecko_response, map_response_to_data
+from .consts.api_url import COINGECKO_API_BASE_URL
+from .consts.mappings import MAPPING_TICKERS_CRYPTO, MAPPING_TICKERS_FIAT
+
 
 def build_coingecko_url(coin_id: str, resource: str) -> str:
-    return f"{COINGECKO_APIBASE_URL}/{quote(coin_id)}/{quote(resource)}"
+    return f"{COINGECKO_API_BASE_URL}/{quote(coin_id)}/{quote(resource)}"
 
 def build_api_params(vs_currency: str, days: int | str, interval: str | None = None) -> dict:
     params = {"vs_currency": vs_currency, "days": days}
@@ -48,41 +50,8 @@ def map_id_and_field_and_interval_to_transformed_timeseries(coin_id: str, field:
 
 get_timeseries_coin = map_id_and_field_to_transformed_timeseries
 get_timeseries_crypto = get_timeseries_coin
-
 get_timeserieses_coin = map_id_to_transformed_timeseries
 get_timeserieses_crypto = get_timeserieses_coin
-
-
-MAPPING_TICKERS_CRYPTO = {
-    'BTC': 'bitcoin',
-    'ETH': 'ethereum',
-    'SUI': 'sui',
-    'USDT': 'tether',
-    'BNB': 'binancecoin',
-    'SOL': 'solana',
-    'XRP': 'ripple',
-    'ADA': 'cardano',
-}
-
-MAPPING_TICKERS_FIAT = {
-    'USD': 'usd',
-    'KRW': 'krw',
-    'EUR': 'eur',
-    'JPY': 'jpy',
-    'CNY': 'cny',
-    'GBP': 'gbp',
-    'BTC': 'btc',
-    'ETH': 'eth',
-    'SUI': 'sui',
-    'USDT': 'usdt',
-    'BNB': 'bnb',
-    'SOL': 'sol',
-    'XRP': 'xrp',
-    'ADA': 'ada',
-}
-
-INVERSE_MAPPING_TICKERS_CRYPTO = {v: k for k, v in MAPPING_TICKERS_CRYPTO.items()}
-INVERSE_MAPPING_TICKERS_FIAT = {v: k for k, v in MAPPING_TICKERS_FIAT.items()}
 
 get_canonical_column_name = lambda ticker_fiat, ticker_crypto, field: f'{ticker_fiat}_{ticker_crypto}: {field}'
 
